@@ -1,0 +1,153 @@
+#lang pie
+
+
+
+(the (Pair Atom Atom) (cons 'ratatouille 'baguette))
+
+(car (the (Pair Atom Atom) (cons 'ratatouille 'baguette)))
+
+(cdr (the (Pair Atom Atom) (cons 'ratatouille 'baguette)))
+
+(Pair
+  (car
+    (the (Pair U Atom) (cons Atom 'olive)))
+  (cdr
+    (the (Pair Atom U) (cons 'oil Atom))))
+
+(the Nat 0)
+(the Nat (add1 0))
+
+(claim one Nat)
+(define one (add1 zero))
+
+(claim + (-> Nat (-> Nat Nat)))
+(define +
+  (λ (n)
+    (λ (m)
+      (iter-Nat n m (lambda (x) (add1 x))))))
+
+(claim gauss (-> Nat Nat))
+(define gauss
+  (lambda (x)
+    (+ (rec-Nat x 0 +) x)))
+
+(claim step-* (-> Nat Nat Nat))
+(define step-*
+  (lambda (j next)
+    (+ j next)))
+
+(claim * (-> Nat Nat Nat))
+(define *
+  (lambda (n j)
+    (iter-Nat n 0 (step-* j))))
+
+'ChapterFour
+
+(claim flip
+  (Pi ((A U) (B U)) (-> (Pair A B) (Pair B A))))
+(define flip
+  (lambda (A B)
+    (lambda (p)
+      (cons (cdr p) (car p)))))
+
+(claim elim-Pair
+  (Pi
+    ((A U) (B U) (X U))
+    (-> (Pair A B) (-> A B X) X)))
+(define elim-Pair
+  (lambda (A B X)
+    (lambda (p f)
+      (f (car p) (cdr p)))))
+
+'ChapterFive
+
+(claim step-length (Pi ((E U)) (-> E (List E) Nat Nat)))
+(define step-length
+  (lambda (E)
+    (lambda (e es rest)
+      (add1 rest))))
+
+
+(claim length
+  (Pi ((E U)) (-> (List E) Nat)))
+(define length
+  (lambda (E)
+    (lambda (es)
+      (rec-List es 0 (step-length E)))))
+
+(claim step-append (Pi ((E U)) (-> E (List E) (List E) (List E))))
+(define step-append
+  (lambda (E)
+    (lambda (e es rest)
+      (:: e rest))))
+
+(claim append
+  (Pi ((E U))
+    (-> (List E) (List E) (List E))))
+(define append
+  (lambda (E)
+    (lambda (as bs)
+      (rec-List as bs (step-append E)))))
+      
+(claim snoc
+  (Pi ((E U))
+    (-> (List E) E (List E))))
+(define snoc
+  (lambda (E)
+    (lambda (es e)
+      (append E es (:: e nil)))))
+
+'ChapterSix
+
+(claim first
+  (Pi
+    ((E U) (l Nat) (es (Vec E (add1 l))))
+    E))
+(define first
+  (lambda (E l)
+    (lambda (es) (head es))))
+
+(claim rest
+  (Pi
+    ((E U) (l Nat) (es (Vec E (add1 l))))
+    (Vec E l)))
+(define rest
+  (lambda (E l)
+    (lambda (es)
+      (tail es))))
+
+'ChapterSeven
+
+(claim mot-replicate (Pi ((E U)) (-> Nat U)))
+(define mot-replicate
+  (lambda (E)
+    (lambda (l)
+      (Vec E l))))
+
+(claim replicate
+  (Pi ((E U) (l Nat)) (-> E (Vec E l))))
+(define replicate
+  (lambda (E)
+    (lambda (l e)
+      (ind-Nat
+        l
+        (mot-replicate E)
+        vecnil
+        (lambda (n)
+          (lambda (acc)
+            (vec:: e acc))))))) 
+
+(claim last
+  (Pi
+    ((E U) (l Nat) (es (Vec E (add1 l))))
+    E))
+(define last TODO)
+
+
+
+
+
+
+
+
+
