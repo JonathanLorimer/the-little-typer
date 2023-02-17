@@ -1,7 +1,5 @@
 #lang pie
 
-
-
 (the (Pair Atom Atom) (cons 'ratatouille 'baguette))
 
 (car (the (Pair Atom Atom) (cons 'ratatouille 'baguette)))
@@ -137,17 +135,37 @@
           (lambda (acc)
             (vec:: e acc))))))) 
 
+(claim mot-last (-> U Nat U))
+(define mot-last
+  (lambda (E k)
+    (-> (Vec E (add1 k)) E)))
+
+(claim base-last (Pi ((E U)) (-> (Vec E (add1 0)) E)))
+(define base-last
+  (lambda (E)
+    (lambda (es)
+      (head es))))
+
+(claim step-last
+  (Pi
+    ((E U) (l Nat))
+    (-> (mot-last E l) (mot-last E (add1 l)))))
+(define step-last
+  (lambda (E l)
+    (lambda (acc)
+      (lambda (es)
+        (acc (tail es))))))
+
 (claim last
   (Pi
     ((E U) (l Nat) (es (Vec E (add1 l))))
     E))
-(define last TODO)
+(define last
+  (lambda (E)
+    (lambda (l)
+      (ind-Nat l
+        (mot-last E)
+        (base-last E)
+        (step-last E)))))
 
-
-
-
-
-
-
-
-
+'Chapter8
