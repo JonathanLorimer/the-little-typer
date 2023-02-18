@@ -168,4 +168,17 @@
         (base-last E)
         (step-last E)))))
 
-'Chapter8
+'ChapterEight
+
+(= Nat 17 (+ 14 3))
+
+(claim add0 (Pi ((n Nat)) (= Nat (+ 0 n) n)))
+(define add0
+  (lambda (n) (same n)))
+ 
+(claim plus-1-is-add1
+  (Pi ((n Nat)) (= Nat (+ 1 n) (add1 n))))
+(define plus-1-is-add1
+  (lambda (n) (same (add1 n))))
+
+'ChapterNine
