@@ -182,3 +182,87 @@
   (lambda (n) (same (add1 n))))
 
 'ChapterNine
+
+'ChapterTen
+
+(claim sigma-prac (Sigma ((n Nat)) (= Nat n 20)))
+(define sigma-prac
+  (cons (+ 10 10) (same 20)))
+
+(claim example (Sigma ((n Nat)) (Vec Atom n)))
+(define example (cons 5 (vec:: 'hello (vec:: 'hello (vec:: 'hello (vec:: 'hello (vec:: 'hello vecnil)))))))
+
+(claim base-list->vec (Pi ((E U)) (Sigma ((l Nat)) (Vec E l))))
+(define base-list->vec
+  (lambda (E)
+    (cons 0 vecnil)))
+
+(claim list->vec
+  (Pi ((E U))
+    (-> (List E)
+        (Sigma ((l Nat))
+          (Vec E l)))))
+(define list->vec
+  (lambda (E es)
+    (rec-List es
+      (base-list->vec E)
+      (lambda (e es acc)
+        (cons (add1 (car acc)) (vec:: e (cdr acc)))))))
+
+(claim mot-vec-replicate (-> U Nat U))
+(define mot-vec-replicate
+  (lambda (E k)
+    (Vec E k)))
+
+(claim step-vec-replicate
+  (Π ((E U)
+      (e E)
+      (n-1 Nat))
+    (→ (Vec E n-1)
+      (Vec E (add1 n-1)))))
+(define step-vec-replicate
+  (lambda (E e l)
+   (lambda (rest)
+     (vec:: e rest))))
+
+(claim vec-replicate
+  (Pi ((E U)
+       (l Nat))
+    (-> E
+        (Vec E l))))
+(define vec-replicate
+  (lambda (E l e)
+    (ind-Nat l
+      (mot-vec-replicate E)
+      vecnil
+      (step-vec-replicate E e))))
+
+(claim mot-list->vec (Pi ((E U)) (-> (List E) U)))
+(define mot-list->vec
+  (lambda (E es)
+    (Vec E (length E es))))
+
+(claim step-list->vec
+  (Pi ((E U)
+       (e E)
+       (es (List E)))
+    (-> (mot-list->vec E es)
+        (mot-list->vec E (:: e es)))))
+(define step-list->vec
+  (lambda (E e es)
+    (lambda (vec)
+      (vec:: e vec))))
+
+(claim list->vec2
+  (Pi ((E U)
+       (es (List E)))
+     (Vec E (length E es))))
+(define list->vec2
+  (lambda (E es)
+    (ind-List es
+      (mot-list->vec E)
+      vecnil
+      (step-list->vec E))))
+
+'ChapterEleven
+                       
