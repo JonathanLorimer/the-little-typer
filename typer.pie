@@ -18,11 +18,13 @@
 (claim one Nat)
 (define one (add1 zero))
 
+(claim step-+ (-> Nat Nat))
+(define step-+
+  (lambda (n) (add1 n)))
+
 (claim + (-> Nat (-> Nat Nat)))
 (define +
-  (λ (n)
-    (λ (m)
-      (iter-Nat n m (lambda (x) (add1 x))))))
+  (λ (n j) (iter-Nat n j step-+)))
 
 (claim gauss (-> Nat Nat))
 (define gauss
@@ -265,4 +267,89 @@
       (step-list->vec E))))
 
 'ChapterEleven
-                       
+
+(claim mot-vec-append
+  (Pi ((E U)
+       (j Nat)
+       (k Nat))
+    (-> (Vec E k) U)))
+(define mot-vec-append
+  (lambda (E k j es)
+    (Vec E (+ j k))))
+
+(claim step-vec-append
+  (Pi ((E U)
+       (j Nat)
+       (k Nat)
+       (e E)
+       (es (Vec E k)))
+    (-> (mot-vec-append E j k es)
+        (mot-vec-append E j (add1 k) (vec:: e es)))))
+(define step-vec-append
+  (lambda (E j k e es)
+    (lambda (vec)
+      (vec:: e vec))))
+
+(claim vec-append
+  (Pi ((E U)
+       (l Nat)
+       (j Nat))
+    (-> (Vec E l) (Vec E j)
+        (Vec E (+ l j)))))
+(define vec-append
+  (lambda (E l j)
+    (lambda (xs ys)
+      (ind-Vec l xs
+        (mot-vec-append E j)
+        ys
+        (step-vec-append E j)))))
+       
+'ChapterTwelve
+
+(claim double (-> Nat Nat))
+(define double
+  (lambda (n)
+    (iter-Nat n 0 (lambda (x) (add1 (add1 x))))))
+
+(claim Even (-> Nat U))
+(define Even
+  (lambda (n)
+    (Sigma ((half Nat))
+      (= Nat n (double half)))))
+
+(claim +two-even
+  (Pi ((n Nat))
+    (-> (Even n)
+        (Even (+ 2 n)))))
+(define +two-even
+  (lambda (n even)
+      (cons
+        (add1 (car even))
+        (cong (cdr even) (+ 2)))))
+
+(claim Odd (-> Nat U))
+(define Odd
+  (lambda (n)
+    (Sigma ((half Nat))
+      (= Nat n (add1 (double half))))))
+
+(claim one-is-odd (Odd 1))
+(define one-is-odd (cons 0 (same 1)))
+
+(claim add1-even->odd
+  (Pi ((n Nat))
+    (-> (Even n)
+        (Odd (add1 n)))))
+(define add1-even->odd
+  (lambda (n even)
+    (cons (car even) (cong (cdr even) (+ 1)))))
+
+(claim add1-odd->even
+  (Pi ((n Nat))
+    (-> (Odd n)
+        (Even (add1 n)))))
+(define add1-odd->even
+  (lambda (n odd)
+    (cons (add1 (car odd)) (cong (cdr odd) (+ 1)))))
+
+'ChapterThirteen
