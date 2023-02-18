@@ -353,3 +353,37 @@
     (cons (add1 (car odd)) (cong (cdr odd) (+ 1)))))
 
 'ChapterThirteen
+
+(claim mot-even-or-odd (-> Nat U))
+(define mot-even-or-odd (lambda (n) (Either (Even n) (Odd n))))
+
+(claim even-zero (Even 0))
+(define even-zero (cons 0 (same 0)))
+
+
+(claim step-even-or-odd
+  (Pi ((n Nat))
+    (-> (mot-even-or-odd n)
+        (mot-even-or-odd (add1 n)))))
+(define step-even-or-odd
+  (lambda (n eOrO)
+    (ind-Either eOrO
+      (lambda (eOrO) (mot-even-or-odd (add1 n)))
+      (lambda (even)
+        (right (add1-even->odd n even)))
+      (lambda (odd)
+        (left (add1-odd->even n odd))))))
+      
+(claim even-or-odd
+  (Pi ((n Nat))
+    (Either (Even n) (Odd n))))
+(define even-or-odd
+  (lambda (n)
+    (ind-Nat
+      n
+      mot-even-or-odd
+      (left even-zero)
+      step-even-or-odd)))
+
+'ChapterFourteen
+ 
