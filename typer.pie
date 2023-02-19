@@ -386,4 +386,33 @@
       step-even-or-odd)))
 
 'ChapterFourteen
- 
+
+(claim Maybe (-> U U))
+(define Maybe
+  (lambda (X)
+    (Either X Trivial)))
+
+(claim nothing
+  (Pi ((E U))
+    (Maybe E)))
+(define nothing
+  (lambda (E)
+    (right sole)))
+
+(claim just
+  (Pi ((E U))
+    (-> E (Maybe E))))
+(define just
+  (lambda (E e)
+    (left e)))
+
+(claim maybe-head
+  (Pi ((E U))
+    (-> (List E)
+        (Maybe E))))
+(define maybe-head
+  (lambda (E es)
+    (rec-List es
+      (nothing E)
+      (lambda (hd tl t)
+        (just (List E) tl)))))
